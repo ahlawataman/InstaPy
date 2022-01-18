@@ -2590,20 +2590,21 @@ class CustomizedArgumentParser(ArgumentParser):
         """
         return []
 
-
 def get_additional_data(browser):
     """
     Get additional data object from page source
-    Idea and Code by alokkumarsbg
+    Idea and Code by Aman Ahlawat
 
     :param browser: The selenium webdriver instance
     :return additional_data: Json data from window.__additionalData extracted from page source
     """
     additional_data = None
     soup = BeautifulSoup(browser.page_source, "html.parser")
-    for text in soup(text=re.compile(r"window.__additionalDataLoaded")):
-        if re.search("^window.__additionalDataLoaded", text):
-            additional_data = json.loads(re.search("{.*}", text).group())
+    scripts = soup.find_all('script')
+    for script in scripts:
+        if re.search("^window.__additionalDataLoaded", script.text):
+            additional_data = json.loads(re.search("{.*}", script.text).group())
+            
             break
 
     return additional_data
